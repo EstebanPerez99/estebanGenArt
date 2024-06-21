@@ -35,12 +35,7 @@ function draw() {
   // strokeWeight(5);
   // strokeCap(SQUARE);
   // line(p1.x, p1.y, p2.x, p2.y);
-
-  // dibujar puntos en linea
-  fill("red");
-  noStroke();
-  const puntosLinea = generarPuntosEquidistantes(p1, p2, 100, true);
-  console.log({ puntosLinea });
+  new LineaGrid(p1, p2);
   pop();
 }
 
