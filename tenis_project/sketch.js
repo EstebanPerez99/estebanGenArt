@@ -5,7 +5,7 @@ const NOISE_WEIGHTS_SCALE = 0.001;
 const DRAW_STEP_1 = true;
 
 function setup() {
-  noiseSeed(1);
+  // noiseSeed(1);
   angleMode(DEGREES);
   rectMode(CENTER);
   noLoop();
@@ -15,15 +15,20 @@ function setup() {
 }
 
 function draw() {
+  // nos vamos a desplazar para poder tener un contorno
+  const numberOfCells = 10;
+  const cellW = width / numberOfCells;
+  const cellH = height / numberOfCells;
+  push();
+  translate(-cellW, -cellH);
   // dibujar grid
-
-  const gridPoints = crearGrid(10, 10, DRAW_STEP_1);
+  const gridPoints = crearGrid(numberOfCells, numberOfCells, DRAW_STEP_1, 2);
 
   console.log(gridPoints);
 
   // dibujar linea
-  let p1 = gridPoints[9][0];
-  let p2 = gridPoints[0][9];
+  let p1 = gridPoints[gridPoints.length - 1][0];
+  let p2 = gridPoints[0][gridPoints.length - 1];
 
   // LINEA BLANCA ENTRE LOS 2 PUNTOS
   // stroke(255);
@@ -36,13 +41,14 @@ function draw() {
   noStroke();
   const puntosLinea = generarPuntosEquidistantes(p1, p2, 100, true);
   console.log({ puntosLinea });
+  pop();
 }
 
 /**
  * 1. Crear Grid
  */
-const crearGrid = (grid_w, grid_h, draw = false) => {
-  const gridPoints = u_grid(grid_w, grid_h, draw).map((rows) =>
+const crearGrid = (grid_w, grid_h, draw = false, padding = 0) => {
+  const gridPoints = u_grid(grid_w, grid_h, draw, padding).map((rows) =>
     rows.map((cell) => {
       let nx = NOISE_WEIGHTS_SCALE * cell.x;
       let ny = NOISE_WEIGHTS_SCALE * cell.y;

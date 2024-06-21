@@ -14,12 +14,12 @@ function createSquare(w, h, randomRange) {
 }
 
 // hace grid y regresa puntos medios
-function u_grid(cols, rows, draw = false) {
+function u_grid(cols, rows, draw = false, padding = 0) {
   const cellW = width / cols;
   const cellH = height / rows;
-  const points = Array.from({ length: rows }, () => []);
-  for (let y = 0; y < rows; y++) {
-    for (let x = 0; x < cols; x++) {
+  const points = Array.from({ length: rows + padding }, () => []);
+  for (let y = 0; y < rows + padding; y++) {
+    for (let x = 0; x < cols + padding; x++) {
       let xPoint = x * cellW + cellW / 2;
       let yPoint = y * cellH + cellH / 2;
       points[y].push({ x: xPoint, y: yPoint });
