@@ -1,23 +1,30 @@
 class LineaGrid {
   start;
   end;
+  puntos;
 
   constructor(start, end) {
     this.start = start;
     this.end = end;
     fill("red");
     noStroke();
-    const puntosLinea = generarPuntosEquidistantes(
+    this.puntos = generarPuntosEquidistantes(
       this.start,
       this.end,
-      100,
-      false
+      100, // numero
+      false // dibujar
     );
-    console.log({ puntosLinea });
-    this.dibujarLineaConPerspectiva(this.start, this.end);
+    push();
+    stroke(255);
+    this._drawDot(this.start.x, this.start.y);
+    this._drawDot(this.end.x, this.end.y);
+    this._drawLine(this.start.x, this.start.y, this.end.x, this.end.y);
+    pop();
   }
 
-  dibujarLineaConPerspectiva(dot1, dot2, draw = false) {
+  dibujarLineaConPerspectiva(draw = false) {
+    let dot1 = this.start;
+    let dot2 = this.end;
     let p1, p2;
     // Dos puntos identicos
     if (dot1.x === dot2.x && dot1.y === dot2.y) {
@@ -239,7 +246,8 @@ class LineaGrid {
 
   _drawFinalLine(p1, p2, p3, p4) {
     strokeWeight(0);
-    fill(color("rgba(0, 255, 0, 0.3)"));
+    // fill(color("rgba(0, 255, 0, 0.3)"));
+    fill(color("rgba(255, 255, 255, 1)"));
     beginShape();
     vertex(p1.x, p1.y);
     vertex(p2.x, p2.y);
