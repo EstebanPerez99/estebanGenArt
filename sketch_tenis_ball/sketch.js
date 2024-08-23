@@ -6,13 +6,17 @@ function setup() {
 	createCanvas(canvasSize, canvasSize);
 	rectMode(CENTER);
 	angleMode(DEGREES);
-	noLoop();
+	colorMode(HSL);
+	// pixelDensity(1);
+	print("pixelDensity: ", pixelDensity());
+	CONFIGS.pixelDensity = pixelDensity();
+	// noLoop();
 }
 
 function draw() {
-	background(220);
+	background(0, 0, 86);
 
-	fill(255, 0, 0);
+	fill(0, 100, 50);
 	textSize(20);
 	textAlign(LEFT, TOP);
 	text(INCLINATION, 10, 10);
@@ -22,31 +26,33 @@ function draw() {
 	const middle = width / 2;
 
 	noStroke();
-	fill(244, 226, 49);
+	fill(55, 90, 57); // amarillo
 	const ballDiameter = width * 0.98;
 	circle(middle, middle, ballDiameter);
 	noFill();
-	stroke(255, 0, 0);
+	stroke(0, 100, 50);
 	circle(middle, middle, 5);
 
-	const mouseXWithLimit = min(width, mouseX);
-	const mouseYHeightLimit = min(height, mouseY);
+	const mouseXWithLimit = 67;
+	const mouseYHeightLimit = 306;
+	// const mouseXWithLimit = min(width, mouseX);
+	// const mouseYHeightLimit = min(height, mouseY);
 	const PADDING = width * 0; // 0.2;
 	const xPointer = map(mouseXWithLimit, 0, width, PADDING, width - PADDING);
 	const yPointer = map(mouseYHeightLimit, 0, height, PADDING, height - PADDING);
 	translate(xPointer, yPointer);
 	CONFIGS = { originX: xPointer, originY: yPointer };
-	const DISTANCIA_ENTRE_FIGURAS = width + width * 0.1; // 0.9
+	const DISTANCIA_ENTRE_FIGURAS = width + width * 0.2; // 0.9
 
 	let rectPosX = -DISTANCIA_ENTRE_FIGURAS / 2;
 	let rectPosY = 0;
 	let rectWidth = width * 0.5;
-	let rectHeigth = height * 0.3; // 0.8
+	let rectHeight = height * 0.3; // 0.8
 	let circleCenterX = rectWidth / 2 + rectPosX;
 
 	push();
 	noStroke();
-	fill(0, 0, 255);
+	fill(240, 100, 50);
 	circle(0, 0, 5);
 	pop();
 
@@ -55,45 +61,113 @@ function draw() {
 
 	push(); // (start) ESQUELETO  **********
 	rotate(INCLINATION);
-	stroke(255, 0, 0);
+	stroke(0, 100, 50);
 	strokeWeight(1);
-	rect(rectPosX, rectPosY, rectWidth, rectHeigth);
-	rect(rectPosX, rectPosY, rectWidth, rectHeigth - inner_offset);
-	circle(circleCenterX, rectPosY, rectHeigth);
-	circle(circleCenterX, rectPosY, rectHeigth - inner_offset);
+
+	const rect_centro_1 = {
+		rx: rectPosX,
+		ry: rectPosY,
+		width: rectWidth,
+		height: rectHeight,
+	};
+	const rect_interior_centro_1 = {
+		rx: rectPosX,
+		ry: rectPosY,
+		width: rectWidth,
+		height: rectHeight - inner_offset,
+	};
+	const circulo_centro_1 = {
+		cx: circleCenterX,
+		cy: rectPosY,
+		diameter: rectHeight,
+	};
+	const circulo_interior_centro_1 = {
+		cx: circleCenterX,
+		cy: rectPosY,
+		diameter: rectHeight - inner_offset,
+	};
 
 	const curve_offset = width * 0.175;
 	const curve_offset2 = width * 0.181;
 
 	// circulo de arriba
-	circle(
-		circleCenterX - curve_offset,
-		rectPosY - rectHeigth + inner_offset_half,
-		rectHeigth
-	);
-	circle(
-		circleCenterX - curve_offset2,
-		rectPosY - rectHeigth + inner_offset_half,
-		rectHeigth - inner_offset
-	);
+	const circulo_arriba_1 = {
+		cx: circleCenterX - curve_offset,
+		cy: rectPosY - rectHeight + inner_offset_half,
+		diameter: rectHeight,
+	};
+	const circulo_interior_arriba_1 = {
+		cx: circleCenterX - curve_offset2,
+		cy: rectPosY - rectHeight + inner_offset_half,
+		diameter: rectHeight - inner_offset,
+	};
 	// circulo de abajo
-	circle(
-		circleCenterX - curve_offset,
-		rectPosY + rectHeigth - inner_offset_half,
-		rectHeigth
-	);
-	circle(
-		circleCenterX - curve_offset2,
-		rectPosY + rectHeigth - inner_offset_half,
-		rectHeigth - inner_offset
-	);
+	const circulo_abajo_1 = {
+		cx: circleCenterX - curve_offset,
+		cy: rectPosY + rectHeight - inner_offset_half,
+		diameter: rectHeight,
+	};
+	const circulo_interior_abajo_1 = {
+		cx: circleCenterX - curve_offset2,
+		cy: rectPosY + rectHeight - inner_offset_half,
+		diameter: rectHeight - inner_offset,
+	};
 
-	doFloodFill(createVector(circleCenterX + 3, -rectHeigth / 2 + 3));
-	// doFloodFill(createVector(circleCenterX - 3, -rectHeigth / 2 + 3));
-	// doFloodFill(createVector(circleCenterX - curve_offset, -rectHeigth / 2 + 3));
+	/**
+	 * Cajas de colisión (start)
+	 */
+	push();
+	const rectColl_circuloArriba_1 = {
+		rx: circleCenterX - curve_offset - rectHeight / 2,
+		ry: rectPosY - rectHeight + inner_offset_half - rectHeight / 2,
+		width: rectHeight / 2,
+		height: rectHeight,
+	};
+	const rectColl_rectCentro_1 = {
+		rx: circleCenterX - curve_offset + 1,
+		ry: rectPosY - rectHeight / 2,
+		width: abs(circleCenterX - curve_offset + 1 - circleCenterX),
+		height: rectHeight,
+	};
+	const rectColl_circuloCentro_1 = {
+		rx: circleCenterX + 1,
+		ry: rectPosY - rectHeight / 2,
+		width: rectHeight / 2,
+		height: rectHeight,
+	};
+	const rectColl_circuloAbajo_1 = {
+		rx: circleCenterX - curve_offset - rectHeight / 2,
+		ry: rectPosY + rectHeight - inner_offset_half - rectHeight / 2,
+		width: rectHeight / 2,
+		height: rectHeight,
+	};
+	pop();
+
+	/**
+	 * Cajas de colisión (end)
+	 */
+
+	const esqueleto_1 = {
+		rect_centro_1,
+		rect_interior_centro_1,
+		circulo_centro_1,
+		circulo_interior_centro_1,
+		circulo_arriba_1,
+		circulo_interior_arriba_1,
+		circulo_abajo_1,
+		circulo_interior_abajo_1,
+		rectColl_circuloArriba_1,
+		rectColl_rectCentro_1,
+		rectColl_circuloCentro_1,
+		rectColl_circuloAbajo_1,
+	};
+
+	// doFloodFill(createVector(circleCenterX + 3, -rectHeight / 2 + 3));
+	// doFloodFill(createVector(circleCenterX - 3, -rectHeight / 2 + 3));
+	// doFloodFill(createVector(circleCenterX - curve_offset, -rectHeight / 2 + 3));
 	// const puntosEq1 = generarPuntosEquidistantes(
-	// 	{ x: circleCenterX - 3, y: -rectHeigth / 2 + 3 },
-	// 	{ x: circleCenterX - curve_offset, y: -rectHeigth / 2 + 3 },
+	// 	{ x: circleCenterX - 3, y: -rectHeight / 2 + 3 },
+	// 	{ x: circleCenterX - curve_offset, y: -rectHeight / 2 + 3 },
 	// 	10,
 	// 	false
 	// );
@@ -101,11 +175,11 @@ function draw() {
 	// 	doFloodFill(p);
 	// });
 
-	// doFloodFill(createVector(circleCenterX - 3, rectHeigth / 2 - 3));
-	// doFloodFill(createVector(circleCenterX - curve_offset, rectHeigth / 2 - 3));
+	// doFloodFill(createVector(circleCenterX - 3, rectHeight / 2 - 3));
+	// doFloodFill(createVector(circleCenterX - curve_offset, rectHeight / 2 - 3));
 	// const puntosEq2 = generarPuntosEquidistantes(
-	// 	{ x: circleCenterX - 3, y: rectHeigth / 2 - 3 },
-	// 	{ x: circleCenterX - curve_offset, y: rectHeigth / 2 - 3 },
+	// 	{ x: circleCenterX - 3, y: rectHeight / 2 - 3 },
+	// 	{ x: circleCenterX - curve_offset, y: rectHeight / 2 - 3 },
 	// 	10,
 	// 	false
 	// );
@@ -115,14 +189,14 @@ function draw() {
 
 	// doFloodFill(
 	// 	createVector(
-	// 		circleCenterX - curve_offset - rectHeigth / 2 + 2,
-	// 		rectPosY - rectHeigth + inner_offset_half + 3
+	// 		circleCenterX - curve_offset - rectHeight / 2 + 2,
+	// 		rectPosY - rectHeight + inner_offset_half + 3
 	// 	)
 	// );
 	// doFloodFill(
 	// 	createVector(
-	// 		circleCenterX - curve_offset - rectHeigth / 2 + 2,
-	// 		rectPosY + rectHeigth - inner_offset_half - 3
+	// 		circleCenterX - curve_offset - rectHeight / 2 + 2,
+	// 		rectPosY + rectHeight - inner_offset_half - 3
 	// 	)
 	// );
 
@@ -132,40 +206,106 @@ function draw() {
 	// rectWidth = width / 2;
 	circleCenterX = rectPosX - rectWidth / 2;
 
-	rect(rectPosX, rectPosY, rectWidth, rectHeigth);
-	circle(circleCenterX, rectPosY, rectHeigth);
-	rect(rectPosX, rectPosY, rectWidth, rectHeigth - inner_offset);
-	circle(circleCenterX, rectPosY, rectHeigth - inner_offset);
+	const rect_centro_2 = {
+		rx: rectPosX,
+		ry: rectPosY,
+		width: rectWidth,
+		height: rectHeight,
+	};
+	const rect_interior_centro_2 = {
+		rx: rectPosX,
+		ry: rectPosY,
+		width: rectWidth,
+		height: rectHeight - inner_offset,
+	};
+	const circulo_centro_2 = {
+		cx: circleCenterX,
+		cy: rectPosY,
+		diameter: rectHeight,
+	};
+	const circulo_interior_centro_2 = {
+		cx: circleCenterX,
+		cy: rectPosY,
+		diameter: rectHeight - inner_offset,
+	};
 
 	// circulo de arriba
-	circle(
-		circleCenterX + curve_offset,
-		rectPosY - rectHeigth + inner_offset_half,
-		rectHeigth
-	);
-	circle(
-		circleCenterX + curve_offset2,
-		rectPosY - rectHeigth + inner_offset_half,
-		rectHeigth - inner_offset
-	);
-	// circulo de abajo
-	circle(
-		circleCenterX + curve_offset,
-		rectPosY + rectHeigth - inner_offset_half,
-		rectHeigth
-	);
-	circle(
-		circleCenterX + curve_offset2,
-		rectPosY + rectHeigth - inner_offset_half,
-		rectHeigth - inner_offset
-	);
+	const circulo_arriba_2 = {
+		cx: circleCenterX + curve_offset,
+		cy: rectPosY - rectHeight + inner_offset_half,
+		diameter: rectHeight,
+	};
+	const circulo_interior_arriba_2 = {
+		cx: circleCenterX + curve_offset2,
+		cy: rectPosY - rectHeight + inner_offset_half,
+		diameter: rectHeight - inner_offset,
+	};
 
-	// doFloodFill(createVector(circleCenterX - 5, -rectHeigth / 2 + 3));
-	// doFloodFill(createVector(circleCenterX + 3, -rectHeigth / 2 + 3));
-	// doFloodFill(createVector(circleCenterX + curve_offset, -rectHeigth / 2 + 3));
+	// circulo de abajo
+	const circulo_abajo_2 = {
+		cx: circleCenterX + curve_offset,
+		cy: rectPosY + rectHeight - inner_offset_half,
+		diameter: rectHeight,
+	};
+	const circulo_interior_abajo_2 = {
+		cx: circleCenterX + curve_offset2,
+		cy: rectPosY + rectHeight - inner_offset_half,
+		diameter: rectHeight - inner_offset,
+	};
+
+	/**
+	 * Cajas de colisión (start)
+	 */
+	push();
+	const rectColl_circuloArriba_2 = {
+		rx: circleCenterX + curve_offset,
+		ry: rectPosY - rectHeight + inner_offset_half - rectHeight / 2,
+		width: rectHeight / 2,
+		height: rectHeight,
+	};
+	const rectColl_rectCentro_2 = {
+		rx: circleCenterX,
+		ry: rectPosY - rectHeight / 2,
+		width: abs(circleCenterX + curve_offset - circleCenterX) - 1,
+		height: rectHeight,
+	};
+	const rectColl_circuloCentro_2 = {
+		rx: circleCenterX - rectHeight / 2,
+		ry: rectPosY - rectHeight / 2,
+		width: rectHeight / 2 - 1,
+		height: rectHeight,
+	};
+	const rectColl_circuloAbajo_2 = {
+		rx: circleCenterX + curve_offset,
+		ry: rectPosY + rectHeight - inner_offset_half - rectHeight / 2,
+		width: rectHeight / 2,
+		height: rectHeight,
+	};
+	/**
+	 * Cajas de colisión (end)
+	 */
+	const esqueleto_2 = {
+		rect_centro_2,
+		rect_interior_centro_2,
+		circulo_centro_2,
+		circulo_interior_centro_2,
+		circulo_arriba_2,
+		circulo_interior_arriba_2,
+		circulo_abajo_2,
+		circulo_interior_abajo_2,
+		rectColl_circuloArriba_2,
+		rectColl_rectCentro_2,
+		rectColl_circuloCentro_2,
+		rectColl_circuloAbajo_2,
+	};
+	pop();
+
+	// doFloodFill(createVector(circleCenterX - 5, -rectHeight / 2 + 3));
+	// doFloodFill(createVector(circleCenterX + 3, -rectHeight / 2 + 3));
+	// doFloodFill(createVector(circleCenterX + curve_offset, -rectHeight / 2 + 3));
 	// const puntosEq3 = generarPuntosEquidistantes(
-	// 	{ x: circleCenterX + 3, y: -rectHeigth / 2 + 3 },
-	// 	{ x: circleCenterX + curve_offset, y: -rectHeigth / 2 + 3 },
+	// 	{ x: circleCenterX + 3, y: -rectHeight / 2 + 3 },
+	// 	{ x: circleCenterX + curve_offset, y: -rectHeight / 2 + 3 },
 	// 	10,
 	// 	false
 	// );
@@ -173,11 +313,11 @@ function draw() {
 	// 	doFloodFill(p);
 	// });
 
-	// doFloodFill(createVector(circleCenterX + 3, rectHeigth / 2 - 3));
-	// doFloodFill(createVector(circleCenterX + curve_offset, rectHeigth / 2 - 3));
+	// doFloodFill(createVector(circleCenterX + 3, rectHeight / 2 - 3));
+	// doFloodFill(createVector(circleCenterX + curve_offset, rectHeight / 2 - 3));
 	// const puntosEq4 = generarPuntosEquidistantes(
-	// 	{ x: circleCenterX + 3, y: rectHeigth / 2 - 3 },
-	// 	{ x: circleCenterX + curve_offset, y: rectHeigth / 2 - 3 },
+	// 	{ x: circleCenterX + 3, y: rectHeight / 2 - 3 },
+	// 	{ x: circleCenterX + curve_offset, y: rectHeight / 2 - 3 },
 	// 	10,
 	// 	false
 	// );
@@ -186,16 +326,21 @@ function draw() {
 	// });
 	// doFloodFill(
 	// 	createVector(
-	// 		circleCenterX + curve_offset + rectHeigth / 2 - 2,
-	// 		rectPosY - rectHeigth + inner_offset_half + 3
+	// 		circleCenterX + curve_offset + rectHeight / 2 - 2,
+	// 		rectPosY - rectHeight + inner_offset_half + 3
 	// 	)
 	// );
-	doFloodFill(
-		createVector(
-			circleCenterX + curve_offset + rectHeigth / 2 - 2,
-			rectPosY + rectHeigth - inner_offset_half - 3
-		)
-	);
+	// doFloodFill(
+	// 	createVector(
+	// 		circleCenterX + curve_offset + rectHeight / 2 - 2,
+	// 		rectPosY + rectHeight - inner_offset_half - 3
+	// 	)
+	// );
+
+	const tennisBall = new TennisBall({ esqueleto_1, esqueleto_2 }, true);
+	tennisBall.drawCollBoxes();
+	const p1 = createVector(mouseX, mouseY);
+	tennisBall.checkPoint(p1);
 	pop(); // (end) ESQUELETO **********
 	pop();
 }
@@ -230,32 +375,43 @@ function keyPressed() {
 // 	pop();
 // }
 
-function doFloodFill(seed, fillColor = [255, 255, 255]) {
+function doFloodFill(seed, fillColor = [0, 0, 100]) {
+	print("seed: ", seed.x, seed.y);
 	push();
 	translate(-CONFIGS.originX, -CONFIGS.originY);
-	seed = createVector(
+	newSeed = createVector(
 		round(seed.x + CONFIGS.originX),
 		round(seed.y + CONFIGS.originY)
 	);
-	if (seed.x > width || seed.x < 0 || seed.y > height || seed.y < 0) {
+	if (
+		newSeed.x > width ||
+		newSeed.x < 0 ||
+		newSeed.y > height ||
+		newSeed.y < 0
+	) {
 		pop();
 		return;
 	}
 	loadPixels();
 
-	let index = 4 * (width * seed.y + seed.x);
-	// print("seed.x: ", seed.x);
-	// print("seed.y: ", seed.y);
+	print("width: ", width);
+	print("height: ", height);
+	print("newSeed.x: ", newSeed.x);
+	print("newSeed.y: ", newSeed.y);
+	print("total de pixeles: ", pixels.length);
+	let index = 4 * (width * newSeed.y + newSeed.x);
 	let seedColor = [pixels[index], pixels[index + 1], pixels[index + 2]];
+	print(index);
+	print("seedColor: ", seedColor);
 
-	// solo se pinta si el seed color es diferente al fill color y si el seed color es amarillo.
+	// solo se pinta si el seed color es diferente al fill color .... (TODO: y si el seed color es amarillo).
 	if (u_arrayEquals(seedColor, fillColor)) {
 		pop();
 		return;
 	}
 
 	let queue = [];
-	queue.push(seed);
+	queue.push(newSeed);
 
 	while (queue.length) {
 		let current = queue.shift();
