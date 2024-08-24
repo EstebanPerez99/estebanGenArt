@@ -1,7 +1,8 @@
 let particles = [];
+let STOP = 50;
 
 function setup() {
-  createCanvas(400, 400);
+  createCanvas(windowWidth, windowHeight);
   background(245);
   colorMode(HSL);
   rectMode(CORNER);
@@ -15,12 +16,17 @@ function setup() {
     { from: color(7, 82, 50, 0.05), to: color(22, 82, 50, 0.05) },
   ];
 
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < 12; i++) {
     particles.push(new Particle(colores));
   }
+  STOP = Math.floor(random(4,20));
 }
 
 function draw() {
+  print(frameCount)
+  if(frameCount === STOP){
+    noLoop();
+  }
   background(245, 47, 0, 1);
   for (let i = 0; i < particles.length; i++) {
     particles[i].createParticle();
@@ -56,7 +62,7 @@ class Particle {
       let percentage = i / 360;
       let fillColor = lerpColor(from, to, percentage);
       fill(fillColor);
-      rect(0, 0, 500, 5);
+      rect(0, 0, max(windowWidth, windowHeight), 5);
       pop();
     }
     fill(120, 0, 100, 0.8);
