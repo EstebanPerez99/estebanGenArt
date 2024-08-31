@@ -42,6 +42,7 @@ const u_isInsideRectangle_CORNER = (x, y, spec) => {
 	return false;
 };
 
+// spec 1 es el rect grande
 const u_isInsideHollowRectangle_CORNER = (x, y, spec1, spec2) => {
 	if (
 		u_isInsideRectangle_CORNER(x, y, spec1) &&
@@ -64,6 +65,7 @@ const u_isInsideCircle = (x, y, spec) => {
 	return false;
 };
 
+// spec 1 es el circulo grande
 const u_isInsideHollowCircle = (x, y, spec1, spec2) => {
 	if (u_isInsideCircle(x, y, spec1) && !u_isInsideCircle(x, y, spec2)) {
 		return true;

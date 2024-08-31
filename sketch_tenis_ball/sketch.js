@@ -10,7 +10,7 @@ function setup() {
 	// pixelDensity(1);
 	print("pixelDensity: ", pixelDensity());
 	CONFIGS.pixelDensity = pixelDensity();
-	// noLoop();
+	noLoop();
 }
 
 function draw() {
@@ -122,24 +122,44 @@ function draw() {
 		ry: rectPosY - rectHeight + inner_offset_half - rectHeight / 2,
 		width: rectHeight / 2,
 		height: rectHeight,
+		collisionDetails: {
+			type: "circle",
+			outer: circulo_arriba_1,
+			inner: circulo_interior_arriba_1,
+		},
 	};
 	const rectColl_rectCentro_1 = {
-		rx: circleCenterX - curve_offset + 1,
+		rx: circleCenterX - curve_offset,
 		ry: rectPosY - rectHeight / 2,
-		width: abs(circleCenterX - curve_offset + 1 - circleCenterX),
+		width: abs(circleCenterX - curve_offset - circleCenterX),
 		height: rectHeight,
+		collisionDetails: {
+			type: "rect",
+			outer: rect_centro_1,
+			inner: rect_interior_centro_1,
+		},
 	};
 	const rectColl_circuloCentro_1 = {
-		rx: circleCenterX + 1,
+		rx: circleCenterX,
 		ry: rectPosY - rectHeight / 2,
 		width: rectHeight / 2,
 		height: rectHeight,
+		collisionDetails: {
+			type: "circle",
+			outer: circulo_centro_1,
+			inner: circulo_interior_centro_1,
+		},
 	};
 	const rectColl_circuloAbajo_1 = {
 		rx: circleCenterX - curve_offset - rectHeight / 2,
 		ry: rectPosY + rectHeight - inner_offset_half - rectHeight / 2,
 		width: rectHeight / 2,
 		height: rectHeight,
+		collisionDetails: {
+			type: "circle",
+			outer: circulo_abajo_1,
+			inner: circulo_interior_abajo_1,
+		},
 	};
 	pop();
 
@@ -262,24 +282,44 @@ function draw() {
 		ry: rectPosY - rectHeight + inner_offset_half - rectHeight / 2,
 		width: rectHeight / 2,
 		height: rectHeight,
+		collisionDetails: {
+			type: "circle",
+			outer: circulo_arriba_2,
+			inner: circulo_interior_arriba_2,
+		},
 	};
 	const rectColl_rectCentro_2 = {
 		rx: circleCenterX,
 		ry: rectPosY - rectHeight / 2,
-		width: abs(circleCenterX + curve_offset - circleCenterX) - 1,
+		width: abs(circleCenterX + curve_offset - circleCenterX),
 		height: rectHeight,
+		collisionDetails: {
+			type: "rect",
+			outer: rect_centro_2,
+			inner: rect_interior_centro_2,
+		},
 	};
 	const rectColl_circuloCentro_2 = {
 		rx: circleCenterX - rectHeight / 2,
 		ry: rectPosY - rectHeight / 2,
-		width: rectHeight / 2 - 1,
+		width: rectHeight / 2,
 		height: rectHeight,
+		collisionDetails: {
+			type: "circle",
+			outer: circulo_centro_2,
+			inner: circulo_interior_centro_2,
+		},
 	};
 	const rectColl_circuloAbajo_2 = {
 		rx: circleCenterX + curve_offset,
 		ry: rectPosY + rectHeight - inner_offset_half - rectHeight / 2,
 		width: rectHeight / 2,
 		height: rectHeight,
+		collisionDetails: {
+			type: "circle",
+			outer: circulo_abajo_2,
+			inner: circulo_interior_abajo_2,
+		},
 	};
 	/**
 	 * Cajas de colisión (end)
@@ -339,7 +379,8 @@ function draw() {
 
 	const tennisBall = new TennisBall({ esqueleto_1, esqueleto_2 }, true);
 	tennisBall.drawCollBoxes();
-	const p1 = createVector(mouseX, mouseY);
+	// const p1 = createVector(mouseX + 250, mouseY - 88); //debug custom position
+	const p1 = createVector(mouseX - CONFIGS.originX, mouseY - CONFIGS.originY);
 	tennisBall.checkPoint(p1);
 	pop(); // (end) ESQUELETO **********
 	pop();

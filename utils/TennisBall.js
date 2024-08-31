@@ -95,8 +95,32 @@ class TennisBall {
 		push();
 		for (const item of this.cajasColision) {
 			if (u_isInsideRectangle_CORNER(punto.x, punto.y, item)) {
-				console.log("Está dentro!");
-				fill(0, 0, 0);
+				const details = item.collisionDetails;
+				if (details.type === "circle") {
+					if (
+						u_isInsideHollowCircle(
+							punto.x,
+							punto.y,
+							details.outer,
+							details.inner
+						)
+					) {
+						console.log("Está dentro!");
+						fill(0, 0, 0);
+					}
+				} else {
+					if (
+						u_isInsideHollowRectangle_CENTER(
+							punto.x,
+							punto.y,
+							details.outer,
+							details.inner
+						)
+					) {
+						console.log("Está dentro!");
+						fill(0, 0, 0);
+					}
+				}
 				break;
 			}
 			fill(0, 0, 98);
