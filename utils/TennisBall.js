@@ -5,15 +5,15 @@ class TennisBall {
 	circles;
 	rectangles;
 	constructor(spec, draw) {
-		this.generate(spec.x, spec.y, spec.d, draw);
+		this.generate(spec.x, spec.y, spec.d, draw, spec.ballStyleSpec);
 	}
 
-	generate(ballX, ballY, ballD, draw) {
+	generate(ballX, ballY, ballD, draw, ballStyleSpec) {
 		push();
 
 		noStroke();
-		fill(55, 90, 57); // amarillo
-		circle(ballX, ballY, ballD);
+		// fill(55, 90, 57); // amarillo
+		// circle(ballX, ballY, ballD);
 		noFill();
 
 		const rallasShiftX =
@@ -22,15 +22,15 @@ class TennisBall {
 
 		translate(rallasShiftX, rallasShiftY);
 		// CONFIGS = { originX: rallasShiftX, originY: rallasShiftY };
-		const DISTANCIA_ENTRE_FIGURAS = ballD + ballD * 0.8; // 0.8
+		const DISTANCIA_ENTRE_FIGURAS = ballD + ballD * 0.9; // 0.8
 
 		let rectPosX = -DISTANCIA_ENTRE_FIGURAS / 2;
 		let rectPosY = 0;
 		let rectWidth = ballD * 0.5;
-		let rectHeight = ballD * 0.8; // 0.8
+		let rectHeight = ballD * 0.85; // 0.8 tamaño de circulo!
 		let circleCenterX = rectWidth / 2 + rectPosX;
 
-		const inner_offset = ballD * 0.055; //0.025
+		const inner_offset = ballD * 0.07; //0.025 grosor de linea blanca
 		const inner_offset_half = inner_offset / 2;
 		rotate(0);
 		stroke(0, 100, 50);
@@ -306,11 +306,7 @@ class TennisBall {
 			this.drawCollBoxes();
 		}
 		// (start) dibujar pelota
-		this.drawBall(ballX - rallasShiftX, 0, ballD, {
-			noise_size: 0.001, // esto ordena o desordena los hilos, entre mas chico mas random - 0.001
-			noise_radius: 0.002, //  esto hace los hilos mas grandes o mas chicos, entre mas chico mas largos - 0.002
-			drawFrame: false,
-		});
+		this.drawBall(ballX - rallasShiftX, 0, ballD, ballStyleSpec);
 		// (end)
 
 		pop();
@@ -378,7 +374,7 @@ class TennisBall {
 		const r = diameter / 2;
 		translate(x - r, y - r);
 		let flow_cell_size = 4; // 4
-		let number_of_layers = 2; // 2 ideal para densidads
+		let number_of_layers = 1; // 2 ideal para densidads
 		let flow_l = diameter / flow_cell_size; // el tamaño del grid - 225*225
 		const { noise_size, noise_radius, drawFrame } = spec;
 		for (var i = 0; i < number_of_layers; i++) {
