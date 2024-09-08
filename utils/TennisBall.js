@@ -1,3 +1,18 @@
+/**
+ *
+ * Cuando XT es grande entonces YT tambien debe ser muy grande o pequeño pero al mismo sentido al mismo sentido:
+ *		se ve muy poca linea ejemplos:
+ *			XT: 234, YT: -35
+ *			XT: -275, YT:14 (no se ve casi nada lol)
+ * 		Aceptable:
+ *			XT: 318, YT:76 (aunque se veria mejor con mayor YT)
+ *			XT: 187, YT:-76
+ *			XT: 275, YT: 14
+ * Cuando se desplazan igual se ve raro:
+ *			XT: 66, YT:74   ----> se ve mejor asi XT: 130,  YT: 74
+ *																						XT: -30,  YT: 62
+ */
+
 class TennisBall {
 	cajasColision;
 	esqueleto1;
@@ -12,17 +27,43 @@ class TennisBall {
 		push();
 
 		noStroke();
-		// fill(55, 90, 57); // amarillo
-		// circle(ballX, ballY, ballD);
+		if (ballStyleSpec.fillBackground) {
+			fill(55, 90, 57); // amarillo
+			circle(ballX, ballY, ballD);
+			// Centro de pelota
+			// push();
+			// strokeWeight(2);
+			// stroke(297, 100, 51); // magenta
+			// line(ballX, ballY + ballD, ballX, ballY - ballD);
+			// line(ballX + ballD, ballY, ballX - ballD, ballY);
+			// pop();
+		}
 		noFill();
 
-		const rallasShiftX =
-			ballX + random(0, ballD * 0.8) * (random() >= 0.5 ? 1 : -1);
-		const rallasShiftY = ballY;
+		// const lines_shift = random(0, ballD * 0.8);
+		let trans_x = random(0, ballD * 0.8) * (random() >= 0.5 ? 1 : -1);
+		let trans_y = random(0, ballD * 0.2) * (random() >= 0.5 ? 1 : -1);
+
+		// cuando los dos desplazamientos son muy similares la pelota se ve mal, hay que corregir si este es el caso
+		// -- Experimentacion visial! --
+		if (abs(trans_x) - abs(trans_y) < ballD * 0.2) {
+			trans_y = 0;
+		}
+
+		const rallasShiftX = ballX + trans_x;
+		const rallasShiftY = ballY + trans_y;
+		print("ballD: ", ballD);
+		print("trans_x: ", trans_x);
+		print("trans_y: ", trans_y);
 
 		translate(rallasShiftX, rallasShiftY);
-		// CONFIGS = { originX: rallasShiftX, originY: rallasShiftY };
-		const DISTANCIA_ENTRE_FIGURAS = ballD + ballD * 0.9; // 0.8
+		// centro de skeleton
+		// push();
+		// fill(0, 100, 50);
+		// circle(0, 0, 10);
+		// pop();
+
+		const DISTANCIA_ENTRE_FIGURAS = ballD + ballD * 0.8; // 0.8
 
 		let rectPosX = -DISTANCIA_ENTRE_FIGURAS / 2;
 		let rectPosY = 0;
@@ -32,7 +73,9 @@ class TennisBall {
 
 		const inner_offset = ballD * 0.07; //0.025 grosor de linea blanca
 		const inner_offset_half = inner_offset / 2;
-		rotate(0);
+		const theta = random(-25, 25);
+		print("theta: ", theta);
+		rotate(theta);
 		stroke(0, 100, 50);
 		strokeWeight(1);
 
@@ -306,7 +349,11 @@ class TennisBall {
 			this.drawCollBoxes();
 		}
 		// (start) dibujar pelota
-		this.drawBall(ballX - rallasShiftX, 0, ballD, ballStyleSpec);
+		const centerX = -trans_x;
+		const centerY = -trans_y;
+		let rotatedX = centerX * cos(theta) + centerY * sin(theta);
+		let rotatedY = -centerX * sin(theta) + centerY * cos(theta);
+		this.drawBall(rotatedX, rotatedY, ballD, ballStyleSpec);
 		// (end)
 
 		pop();
@@ -372,14 +419,19 @@ class TennisBall {
 	drawBall(x, y, diameter, spec) {
 		push();
 		const r = diameter / 2;
-		translate(x - r, y - r);
+		const newXOrigin = x - r;
+		const newYOrigin = y - r;
+		translate(newXOrigin, newYOrigin);
 		let flow_cell_size = 4; // 4
 		let number_of_layers = 1; // 2 ideal para densidads
 		let flow_l = diameter / flow_cell_size; // el tamaño del grid - 225*225
 		const { noise_size, noise_radius, drawFrame } = spec;
 		for (var i = 0; i < number_of_layers; i++) {
 			let flow_grid = this.init_flow(flow_l, noise_size, noise_radius);
-			this.display_flow(flow_grid, diameter, flow_cell_size, x);
+			this.display_flow(flow_grid, diameter, flow_cell_size, x, {
+				newXOrigin,
+				newYOrigin,
+			});
 		}
 		if (drawFrame) {
 			push();
@@ -430,7 +482,7 @@ class TennisBall {
 		return mean_arrow;
 	}
 
-	display_flow(flow_grid, diameter, flow_cell_size, offset_x) {
+	display_flow(flow_grid, diameter, flow_cell_size, offset_x, oldPlane) {
 		for (let i = 0; i < flow_grid.length; i++) {
 			for (let j = 0; j < flow_grid[i].length; j++) {
 				if (
@@ -441,15 +493,8 @@ class TennisBall {
 					)
 				) {
 					push();
-					const r = diameter / 2;
-					const x =
-						j * flow_cell_size <= r + offset_x
-							? -1 * r + j * flow_cell_size + offset_x
-							: r - j * flow_cell_size - offset_x;
-					const y =
-						i * flow_cell_size <= r
-							? -1 * r + i * flow_cell_size
-							: r - i * flow_cell_size;
+					const x = j * flow_cell_size + oldPlane.newXOrigin;
+					const y = i * flow_cell_size + oldPlane.newYOrigin;
 					const ballColor = this.getColor({ x, y });
 					pop();
 					stroke(ballColor);
